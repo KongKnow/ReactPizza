@@ -1,10 +1,17 @@
+import { useState } from "react"
 
 
 const Sort = () => {
+  const [activePop, setActivePop] = useState(false)
+  const [sortType, setSortType] = useState('популярности')
+
+  const sortTypes = ['популярности', 'цене', 'алфавиту']
+
     return (
         <div className="sort">
               <div className="sort__label">
                 <svg
+                  style={activePop ? {} : {transform: 'rotateX(180deg)'}}
                   width="10"
                   height="6"
                   viewBox="0 0 10 6"
@@ -17,15 +24,28 @@ const Sort = () => {
                   />
                 </svg>
                 <b>Сортировка по:</b>
-                <span>популярности</span>
+                <span onClick={() => setActivePop(state => !state)}>{sortType}</span>
               </div>
-              <div className="sort__popup">
-                <ul>
-                  <li className="active">популярности</li>
-                  <li>цене</li>
-                  <li>алфавиту</li>
-                </ul>
-              </div>
+              {
+                activePop && (
+                  <div className="sort__popup">
+                    <ul>
+                      {
+                        sortTypes.map((sort, i) => (
+                          <li
+                            key={i}
+                            onClick={() => {
+                              setActivePop(false)
+                              setSortType(sort)
+                            }}
+                            className={sortType === sort ? 'active' : ''}
+                          >{sort}</li>
+                        ))
+                      }
+                    </ul>
+                  </div>
+                )
+              }
             </div>
     )
 }
