@@ -1,0 +1,65 @@
+.root {
+    display: flex;
+    gap: 5px;
+
+    li {
+        a{
+            height: 40px;
+            width: 40px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #000;
+            opacity: 0.5;
+            border-radius: 50%;
+            line-height: 1;
+            transition: all 0.15s linear;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #fe5f1e;
+                opacity: 1;
+                border: 1px solid #fe5f1e;
+                color: #fff;
+            }
+        }
+
+        
+    }
+
+    
+
+    :global {
+        .previous, .next {
+            a {
+                height: 40px;
+                width: 40px;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid #000;
+                opacity: 0.5;
+                border-radius: 50%;
+                line-height: 1;
+                transition: all 0.15s linear;
+                cursor: pointer;
+                &:hover {
+                    background-color: #fe5f1e;
+                    opacity: 1;
+                    border: 1px solid #fe5f1e;
+                    color: #fff;
+                }
+            }
+        }
+        .selected {
+            a {
+                background-color: #fe5f1e;
+                opacity: 1;
+                border: 1px solid #fe5f1e;
+                color: #fff;
+            }
+        }
+    }
+}

@@ -1,11 +1,19 @@
-import { useState } from "react"
-
+import {useSelector, useDispatch} from 'react-redux'
+import { setSortType, setActivePop, setNoPop, setSortBy } from '../redux/filterSlice'
 
 const Sort = () => {
-  const [activePop, setActivePop] = useState(false)
-  const [sortType, setSortType] = useState('популярности')
+  const sortType = useSelector(state => state.filter.sortType)
+  const activePop = useSelector(state => state.filter.activePop)
+  const dispatch = useDispatch()
 
-  const sortTypes = ['популярности', 'цене', 'алфавиту']
+  const sortTypes = [
+    ['популярности (desc)', ['rating', 'desc']], 
+    ['популярности (asc)', ['rating', 'asc']], 
+    ['цене (desc)', ['price', 'desc']], 
+    ['цене (asc)', ['price', 'asc']], 
+    ['алфавиту (desc)', ['title', 'desc']],
+    ['алфавиту (asc)', ['title', 'asc']]
+  ]
 
     return (
         <div className="sort">
@@ -24,7 +32,7 @@ const Sort = () => {
                   />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => setActivePop(state => !state)}>{sortType}</span>
+                <span onClick={() => dispatch(setActivePop())}>{sortType}</span>
               </div>
               {
                 activePop && (
@@ -35,11 +43,12 @@ const Sort = () => {
                           <li
                             key={i}
                             onClick={() => {
-                              setActivePop(false)
-                              setSortType(sort)
+                              dispatch(setNoPop())
+                              dispatch(setSortType(sort[0]))
+                              dispatch(setSortBy(sort[1]))
                             }}
-                            className={sortType === sort ? 'active' : ''}
-                          >{sort}</li>
+                            className={sortType === sort[0] ? 'active' : ''}
+                          >{sort[0]}</li>
                         ))
                       }
                     </ul>
