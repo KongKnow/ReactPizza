@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux"
 import { setCategory } from "../redux/filterSlice"
+import { useEffect } from "react"
 
 const Categories = () => {
 

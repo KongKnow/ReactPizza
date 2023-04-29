@@ -2,8 +2,8 @@ import {createSlice} from '@reduxjs/toolkit'
 
 const initialState = {
     activePop: false,
-    sortType: 'популярности (desc)',
-    sortBy: ['rating', 'desc'],
+    sortBy: ['популярности (desc)', ['rating', 'desc']],
+    searchValue: '',
     category: 0
 }
 
@@ -13,13 +13,17 @@ const filterSlice = createSlice({
     reducers: {
         setActivePop: (state) => {state.activePop = !state.activePop},
         setNoPop: (state) => {state.activePop = false},
-        setSortType: (state, action) => {state.sortType = action.payload},
         setSortBy: (state, action) => {state.sortBy = action.payload},
-        setCategory: (state, action) => {state.category = action.payload}
+        setCategory: (state, action) => {state.category = action.payload},
+        setSearchValue: (state, action) => {state.searchValue = action.payload},
+        setFilters: (state, action) => {
+            state.category = Number(action.payload.category)
+            state.sortBy = action.payload.sortBy
+        }
     }
 })
 
 
 export default filterSlice.reducer
 
-export const {setActivePop, setNoPop, setSortType, setSortBy, setCategory} = filterSlice.actions
+export const {setActivePop, setNoPop, setSortBy, setCategory, setSearchValue, setFilters} = filterSlice.actions

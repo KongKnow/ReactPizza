@@ -1,8 +1,11 @@
 import {useSelector, useDispatch} from 'react-redux'
-import { setSortType, setActivePop, setNoPop, setSortBy } from '../redux/filterSlice'
+import { setActivePop, setNoPop, setSortBy } from '../redux/filterSlice'
+import { useEffect, useRef } from 'react'
 
 const Sort = () => {
-  const sortType = useSelector(state => state.filter.sortType)
+
+  const sortRef = useRef()
+  const sortType = useSelector(state => state.filter.sortBy)
   const activePop = useSelector(state => state.filter.activePop)
   const dispatch = useDispatch()
 
@@ -15,8 +18,22 @@ const Sort = () => {
     ['алфавиту (asc)', ['title', 'asc']]
   ]
 
+  useEffect(() => {
+    const handleClick = (event) => {
+      if(!event.composedPath().includes(sortRef.current)) {
+        dispatch(setNoPop())
+      }
+    }
+
+    document.body.addEventListener('click', handleClick)
+
+    return () => {
+      document.body.removeEventListener('click', handleClick)
+    }
+  }, [])
+
     return (
-        <div className="sort">
+        <div className="sort" ref={sortRef}>
               <div className="sort__label">
                 <svg
                   style={activePop ? {} : {transform: 'rotateX(180deg)'}}
@@ -32,7 +49,7 @@ const Sort = () => {
                   />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={() => dispatch(setActivePop())}>{sortType}</span>
+                <span onClick={() => dispatch(setActivePop())}>{sortType[0]}</span>
               </div>
               {
                 activePop && (
@@ -44,10 +61,9 @@ const Sort = () => {
                             key={i}
                             onClick={() => {
                               dispatch(setNoPop())
-                              dispatch(setSortType(sort[0]))
-                              dispatch(setSortBy(sort[1]))
+                              dispatch(setSortBy(sort))
                             }}
-                            className={sortType === sort[0] ? 'active' : ''}
+                            className={sortType[0] === sort[0] ? 'active' : ''}
                           >{sort[0]}</li>
                         ))
                       }
