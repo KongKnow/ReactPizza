@@ -1,15 +1,22 @@
+import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import { setActivePop, setNoPop, setSortBy } from '../redux/filterSlice'
 import { useEffect, useRef } from 'react'
+import { RootState } from '../redux/store'
+ 
+const Sort: React.FC = () => {
 
-const Sort = () => {
-
-  const sortRef = useRef()
-  const sortType = useSelector(state => state.filter.sortBy)
-  const activePop = useSelector(state => state.filter.activePop)
+  const sortRef = useRef<HTMLDivElement>(null)
+  const sortType = useSelector((state: RootState) => state.filter.sortBy)
+  const activePop = useSelector((state: RootState) => state.filter.activePop)
   const dispatch = useDispatch()
 
-  const sortTypes = [
+  type SortItem = [
+    string, 
+    string[]
+  ]
+
+  const sortTypes: SortItem[] = [
     ['популярности (desc)', ['rating', 'desc']], 
     ['популярности (asc)', ['rating', 'asc']], 
     ['цене (desc)', ['price', 'desc']], 
@@ -19,8 +26,8 @@ const Sort = () => {
   ]
 
   useEffect(() => {
-    const handleClick = (event) => {
-      if(!event.composedPath().includes(sortRef.current)) {
+    const handleClick = (event: MouseEvent) => {
+      if(sortRef.current && !event.composedPath().includes(sortRef.current)) {
         dispatch(setNoPop())
       }
     }

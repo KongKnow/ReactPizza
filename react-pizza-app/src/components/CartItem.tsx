@@ -1,9 +1,31 @@
-import { useDispatch } from "react-redux"
+import React from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { setItems, removeItem, removeByOneItem } from "../redux/cartSlice"
+import { RootState } from "../redux/store"
 
-const CartItem = ({title, id, price, imageUrl, size, type, counter}) => {
+type CartItemProps = {
+    title: string;
+    id: number;
+    price: number;
+    imageUrl: string;
+    size: number;
+    type: string;
+    counter: number;
+}
 
+const CartItem: React.FC<CartItemProps> = ({title, id, price, imageUrl, size, type, counter}) => {
+
+    const items = useSelector((state: RootState) => state.cart.items)
+    const totalPrice = useSelector((state: RootState) => state.cart.totalPrice)
     const dispatch = useDispatch()
+
+
+    const onLocalStorage = () => {
+        localStorage.setItem('cartPizzas', JSON.stringify(items))
+        localStorage.setItem('totalPrice', JSON.stringify(totalPrice))
+    } 
+
+    onLocalStorage()
 
     return (
         <div className="cart__item">
@@ -19,14 +41,14 @@ const CartItem = ({title, id, price, imageUrl, size, type, counter}) => {
                 <p>{type} тесто, {size} см.</p>
             </div>
             <div className="cart__item-count">
-                <div onClick={() => dispatch(removeByOneItem({id, size, type, counter, price}))} className="button button--outline button--circle cart__item-count-minus">
+                <div onClick={() => dispatch(removeByOneItem({title, id, price, imageUrl, size, type, counter}))} className="button button--outline button--circle cart__item-count-minus">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5.92001 3.84V5.76V8.64C5.92001 9.17016 5.49017 9.6 4.96001 9.6C4.42985 9.6 4.00001 9.17016 4.00001 8.64L4 5.76L4.00001 3.84V0.96C4.00001 0.42984 4.42985 0 4.96001 0C5.49017 0 5.92001 0.42984 5.92001 0.96V3.84Z" fill="#EB5A1E"/>
                     <path d="M5.75998 5.92001L3.83998 5.92001L0.959977 5.92001C0.429817 5.92001 -2.29533e-05 5.49017 -2.29301e-05 4.96001C-2.2907e-05 4.42985 0.429817 4.00001 0.959977 4.00001L3.83998 4L5.75998 4.00001L8.63998 4.00001C9.17014 4.00001 9.59998 4.42985 9.59998 4.96001C9.59998 5.49017 9.17014 5.92001 8.63998 5.92001L5.75998 5.92001Z" fill="#EB5A1E"/>
                 </svg>
                 </div>
                 <b>{counter}</b>
-                <div onClick={() => dispatch(setItems({id, size, type, price}))} className="button button--outline button--circle cart__item-count-plus">
+                <div onClick={() => dispatch(setItems({title, id, price, imageUrl, size, type, counter}))} className="button button--outline button--circle cart__item-count-plus">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5.92001 3.84V5.76V8.64C5.92001 9.17016 5.49017 9.6 4.96001 9.6C4.42985 9.6 4.00001 9.17016 4.00001 8.64L4 5.76L4.00001 3.84V0.96C4.00001 0.42984 4.42985 0 4.96001 0C5.49017 0 5.92001 0.42984 5.92001 0.96V3.84Z" fill="#EB5A1E"/>
                     <path d="M5.75998 5.92001L3.83998 5.92001L0.959977 5.92001C0.429817 5.92001 -2.29533e-05 5.49017 -2.29301e-05 4.96001C-2.2907e-05 4.42985 0.429817 4.00001 0.959977 4.00001L3.83998 4L5.75998 4.00001L8.63998 4.00001C9.17014 4.00001 9.59998 4.42985 9.59998 4.96001C9.59998 5.49017 9.17014 5.92001 8.63998 5.92001L5.75998 5.92001Z" fill="#EB5A1E"/>
@@ -37,7 +59,7 @@ const CartItem = ({title, id, price, imageUrl, size, type, counter}) => {
                 <b>{price * counter} ₽</b>
             </div>
             <div className="cart__item-remove">
-                <div onClick={() => dispatch(removeItem({id, size, type, counter, price}))} className="button button--outline button--circle">
+                <div onClick={() => dispatch(removeItem({title, id, price, imageUrl, size, type, counter}))} className="button button--outline button--circle">
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5.92001 3.84V5.76V8.64C5.92001 9.17016 5.49017 9.6 4.96001 9.6C4.42985 9.6 4.00001 9.17016 4.00001 8.64L4 5.76L4.00001 3.84V0.96C4.00001 0.42984 4.42985 0 4.96001 0C5.49017 0 5.92001 0.42984 5.92001 0.96V3.84Z" fill="#EB5A1E"/>
                     <path d="M5.75998 5.92001L3.83998 5.92001L0.959977 5.92001C0.429817 5.92001 -2.29533e-05 5.49017 -2.29301e-05 4.96001C-2.2907e-05 4.42985 0.429817 4.00001 0.959977 4.00001L3.83998 4L5.75998 4.00001L8.63998 4.00001C9.17014 4.00001 9.59998 4.42985 9.59998 4.96001C9.59998 5.49017 9.17014 5.92001 8.63998 5.92001L5.75998 5.92001Z" fill="#EB5A1E"/>

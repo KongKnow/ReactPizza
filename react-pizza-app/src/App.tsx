@@ -3,17 +3,28 @@ import Header from "./components/Header"
 import Home from "./pages/Home"
 import Cart from "./pages/Cart"
 import NotFound from "./pages/NotFound";
-import { useState, createContext } from "react";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setAllItems, setTotalPrice } from "./redux/cartSlice";
 
-
-const MyContext = createContext();
 
 function App() {
-  const [searchValue, setSearchValue] = useState('')
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const pizzas = localStorage.getItem('cartPizzas')
+    const totalPrice = localStorage.getItem('totalPrice')
+
+    if(pizzas && totalPrice) {
+      dispatch(setAllItems(JSON.parse(pizzas)))
+      dispatch(setTotalPrice(+totalPrice))
+      
+    }
+  })
 
   return (
     <div className="wrapper">
-      <MyContext.Provider value={{searchValue, setSearchValue}}>
         <Header />
         <div className="content">
             <Routes>
@@ -22,7 +33,6 @@ function App() {
               <Route path="*" element={<NotFound/>}/>
             </Routes>
         </div>
-      </MyContext.Provider>
     </div>
   );
 }

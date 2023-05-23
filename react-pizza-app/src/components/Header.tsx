@@ -1,15 +1,24 @@
-import { Link } from 'react-router-dom'
+import React from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Search from './Search'
 
 import pizzaLogo from '../assets/img/pizza-logo.svg'
+import { RootState } from '../redux/store'
 
-const Header = () => {
+const Header: React.FC = () => {
 
-  const {totalPrice, items} = useSelector(state => state.cart)
+  const {totalPrice, items} = useSelector((state: RootState) => state.cart)
+  const location = useLocation()
 
-  const amount = items.map(item => item.counter)
+  const amount = items.map((item) => item.counter)
   const initialAmount = 0
+
+  let styles = 'button button--cart'
+
+  if(location.pathname === '/cart') {
+    styles += ' active'
+  } 
 
     return (
       <div className="header">
@@ -23,9 +32,9 @@ const Header = () => {
               </div>
             </div>
           </Link>
-          <Search />
-          <div className="header__cart">
-            <Link to="/cart" className="button button--cart">
+          {location.pathname !== '/cart' && <Search />}
+          <div className="header__cart" style={{visibility: 'visible'}}>
+            <Link to="/cart" className={styles} >
               <span>{totalPrice} ₽</span>
               <div className="button__delimiter"></div>
               <svg
@@ -57,7 +66,7 @@ const Header = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              <span>{amount.reduce((sum, currentValue) => sum + currentValue, initialAmount)}</span>
+              <span>{amount.reduce((sum: number, currentValue: number) => sum + currentValue, initialAmount)}</span>
             </Link>
           </div>
         </div>

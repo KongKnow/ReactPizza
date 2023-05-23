@@ -1,38 +1,40 @@
-import { useEffect, useState, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import {useSelector, useDispatch} from 'react-redux'
 import {useNavigate} from 'react-router-dom'
-import axios from 'axios'
+import { pizzaAsyncThunk } from "../redux/pizzaSlice"
 import qs from 'qs'
 import { setFilters } from "../redux/filterSlice"
 import Categories from "../components/Categories"
 import Sort from "../components/Sort"
 import PizzaBlock from "../components/PizzaBlock"
 import Skeleton from "../components/PizzaBlock/Skeleton"
+import { RootState, useAppDispatch } from "../redux/store"
 // import Pagination from '../components/Pagination'
 
-const Home = () => {
+const Home: React.FC = () => {
 
-    const [pizzas, setPizzas] = useState([])
-    const [loading, setLoading] = useState(true)
+    const pizzas = useSelector((state: RootState) => state.pizza.pizzas)
+    const status = useSelector((state: RootState) => state.pizza.getStatus)
     const isSearch = useRef(false)
     const isMounted = useRef(false)
-    const category = useSelector(state => state.filter.category)
-    const sortBy = useSelector(state => state.filter.sortBy)
-    const searchValue = useSelector(state => state.filter.searchValue)
+    const category = useSelector((state: RootState) => state.filter.category)
+    const sortBy = useSelector((state: RootState) => state.filter.sortBy)
+    const searchValue = useSelector((state: RootState) => state.filter.searchValue)
 
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     // const [currentPage, setCurrentPage] = useState(1)
 
     useEffect(() => {
       if(window.location.search) {
         const currentParams = qs.parse(window.location.search.substring(1))
 
+        console.log(currentParams)
         dispatch(setFilters(currentParams))
 
         isSearch.current = true
       }
-      
+      // eslint-disable-next-line
     }, [])
     
     useEffect(() => {
@@ -42,14 +44,8 @@ const Home = () => {
 
       // For pagination in link should be added 'page=${currentPage}&limit=4&'
 
-      if(!isSearch.current) {
-        setLoading(true)
-        axios.get(link)
-        .then(res => {
-          setPizzas(res.data)
-          setLoading(false)
-        })
-      }
+     
+      dispatch(pizzaAsyncThunk(link))
 
       isSearch.current = false
 
@@ -66,9 +62,10 @@ const Home = () => {
       }
 
       isMounted.current = true
+      // eslint-disable-next-line
     }, [category, sortBy, searchValue])
 
-    const pizzaBlocks = pizzas.map(pizza => {
+    const pizzaBlocks = pizzas.map((pizza) => {
       return <PizzaBlock
         key={pizza.id} 
         {...pizza}
@@ -83,12 +80,21 @@ const Home = () => {
             <Categories/>
             <Sort/>
           </div>
-          <h2 className="content__title">Все пиццы</h2>
-          <div className="content__items">
-            {
-              loading ? skeletons : pizzaBlocks
-            }
-          </div>
+          
+          {
+            status === 'error' 
+            ? 
+            <h2 className="error">Произошла ошибка 😕</h2> 
+            : 
+            <>
+              <h2 className="content__title">Все пиццы</h2>
+              <div className="content__items">
+              {
+                status === 'loading' ? skeletons : pizzaBlocks
+              }
+            </div>
+            </>
+          }
           {/* <Pagination onPageChange={setCurrentPage}/> */}
         </div>
     )

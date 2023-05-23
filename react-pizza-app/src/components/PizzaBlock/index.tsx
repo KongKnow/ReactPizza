@@ -1,18 +1,36 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { setItems } from "../../redux/cartSlice"
+import { RootState } from "../../redux/store";
 
-const PizzaBlock = ({title, id, price, imageUrl, sizes, types}) => {
+type PizzaBlockProps = {
+  title: string;
+  id: number;
+  price: number;
+  imageUrl: string;
+  sizes: number[];
+  types: number[];
+}
+
+const PizzaBlock: React.FC<PizzaBlockProps> = ({title, id, price, imageUrl, sizes, types}) => {
     const [counterType, setCounterType] = useState(0)
     const [counterSize, setCounterSize] = useState(0)
+    const items = useSelector((state: RootState) => state.cart.items)
+    const totalPrice = useSelector((state: RootState) => state.cart.totalPrice)
 
-    const cartPizza = useSelector(state => state.cart.items.filter(item => item.id === id))
+    const cartPizza = useSelector((state: RootState) => state.cart.items.filter((item) => item.id === id))
     const dispatch = useDispatch()
 
     const pizzaTypes = ['тонкое', 'традиционное']
 
-    const amount = cartPizza.map(item => item.counter)
+    const amount = cartPizza.map((item) => item.counter)
     const initialAmount = 0
+
+    const onLocalStorage = () => {
+      localStorage.setItem('cartPizzas', JSON.stringify(items))
+      localStorage.setItem('totalPrice', JSON.stringify(totalPrice))
+      
+    } 
 
     const onAdd = () => {
       const item = {
@@ -28,6 +46,8 @@ const PizzaBlock = ({title, id, price, imageUrl, sizes, types}) => {
       dispatch(setItems(item))
     } 
 
+    onLocalStorage()
+
     return (
         <div className="pizza-block">
               <img
@@ -39,7 +59,7 @@ const PizzaBlock = ({title, id, price, imageUrl, sizes, types}) => {
               <div className="pizza-block__selector">
                 <ul>
                   {
-                    types.map(type => {
+                    types.map((type) => {
                       if(types.length === 1) {
                         return <li key={type} className="active">{pizzaTypes[type]}</li>
                       }
@@ -79,7 +99,7 @@ const PizzaBlock = ({title, id, price, imageUrl, sizes, types}) => {
                     />
                   </svg>
                   <span>Добавить</span>
-                  <i>{cartPizza ? amount.reduce((sum, currentValue) => sum + currentValue, initialAmount) : 0}</i>
+                  <i>{cartPizza ? amount.reduce((sum: number, currentValue: number) => sum + currentValue, initialAmount) : 0}</i>
                 </div>
               </div>
             </div> 

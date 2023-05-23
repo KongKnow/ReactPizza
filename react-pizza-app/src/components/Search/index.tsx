@@ -1,36 +1,36 @@
-import { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setSearchValue } from '../../redux/filterSlice'
 import debounce from 'lodash.debounce'
 
 import styles from './Search.module.scss'
 
-const Search = () => {
+const Search: React.FC = () => {
     const [instantInput, setInstantInput] = useState('')
     const dispatch = useDispatch()
-    const inputRef = useRef()
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const onInputStopChanging = useCallback(
-        debounce((value) => {
+        debounce((value: string) => {
             dispatch(setSearchValue(value))
         }, 1000),
         []
     )
 
-    const onInput = (e, value) => {
+    const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInstantInput(e.target.value)
-        onInputStopChanging(value)
+        onInputStopChanging(e.target.value)
     }
 
     const onClickClear = () => {
         setInstantInput('')
         dispatch(setSearchValue(''))
-        inputRef.current.focus()
+        inputRef.current?.focus()
     }
 
     return (
         <div className={styles.root}>
-            <input ref={inputRef} className={styles.input} onChange={(e) => onInput(e, instantInput)} value={instantInput} placeholder="Поиск пицц ..."/>
+            <input ref={inputRef} className={styles.input} onChange={(e) => onInput(e)} value={instantInput} placeholder="Поиск пицц ..."/>
             <div className={styles.icon}>
                 {
                     instantInput === '' ? null : <svg onClick={onClickClear} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-lg" viewBox="0 0 16 16">
